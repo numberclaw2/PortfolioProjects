@@ -1,0 +1,5 @@
+EXEC msdb.dbo.sp_send_dbmail
+    @profile_name = 'rmc_customer service',
+    @recipients = 'your.email@domain.com',
+    @subject = 'Test Email',
+    @body = 'This is a test.';
