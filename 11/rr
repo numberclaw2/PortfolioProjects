@@ -1,0 +1,28 @@
+-- Step 1: Create Temporary Table to Identify Repeats
+IF OBJECT_ID('tempdb..#TempRepeats') IS NOT NULL
+    DROP TABLE #TempRepeats;
+
+SELECT 
+    user_id,
+    emp_nm,
+    COUNT(*) AS repeats
+INTO #TempRepeats
+FROM care.dbo.rmc_care_outbound_calls_same_name_detail
+WHERE 
+    call_dt > DATEADD(month, -24, GETDATE())  -- Last 24 months
+GROUP BY 
+    user_id,
+    emp_nm
+HAVING 
+    COUNT(*) > 2;
+
+-- Step 2: Main Query to Join with Temporary Table and Get Detailed Interactions with Filtered Count
+SELECT 
+    a.*, 
+    b.repeats AS interaction_count  -- Adding count of interactions (greater than 2) from #TempRepeats
+FROM 
+    care.dbo.rmc_care_outbound_calls_same_name_detail a
+JOIN 
+    #TempRepeats b ON a.user_id = b.user_id
+ORDER BY 
+    a.user_id;
