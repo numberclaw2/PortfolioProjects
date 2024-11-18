@@ -1,0 +1,144 @@
+USE [care]
+GO
+/****** Object:  StoredProcedure [dbo].[care_autocoach_offenders_v2]    Script Date: 11/12/2024 2:23:18 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER procedure [dbo].[care_autocoach_offenders_v2] 
+as 
+
+declare @filestr varchar(2000)   
+declare @filename varchar(1000) 
+ 
+DECLARE @mth_start date =      DATEADD(DAY, -DAY(GETDATE()) + 1, DATEADD(MONTH, -2, GETDATE())) 
+DECLARE  @end_dt date =  dateadd(day, -day(getdate()), getdate())
+DECLARE @FilePath  varchar(1000)
+DECLARE @Insert_FileName   varchar(2000) 
+declare @INSERT_FieldNames varchar(2000) 
+Declare @SheetName varchar(100)
+declare @SQL_INSERT varchar(4000) 
+DECLARE @HDR varchar(3)
+declare @loop int
+declare @email_body varchar(1000)
+declare @email_subject varchar(50) = 'Care autocoach - agents with more than one offenders'
+
+
+
+set @filename ='Care_auto_coach_repeats.xlsx'
+ set @filestr =  'copy\\tdcwpnc4vw005\NCRM_Reporting\care\autocoach\template_acrepeatv2.xlsx d:\temp\'+@filename +'  /y'
+ 
+ exec master..xp_cmdshell  @filestr
+
+ IF OBJECT_ID('tempdb..#TempRepeats') IS NOT NULL
+ DROP TABLE #TempRepeats;
+SELECT
+ user_id,
+ emp_nm,
+ COUNT(*) AS repeats
+INTO #TempRepeats
+FROM care.dbo.rmc_care_outbound_calls_same_name_detail
+WHERE
+ call_dt > DATEADD(month, -24, GETDATE()) -- Last 24 months
+GROUP BY
+ user_id,
+ emp_nm
+HAVING
+ COUNT(*) > 2;
+
+
+
+IF OBJECT_ID('tempdb..#accaredetail') is not null
+DROP TABLE #accaredetail
+SELECT
+ a.*,
+ b.repeats
+  into #accaredetail
+FROM
+ care.dbo.rmc_care_outbound_calls_same_name_detail a
+JOIN
+ #TempRepeats b ON a.user_id = b.user_id
+ORDER BY
+ a.user_id;
+
+
+ set @FilePath = 'D:\temp\'
+ set @Insert_FileName   =  @filename
+ set @SheetName = 'outbound_summary$'
+ SET @HDR = 'Yes' 
+  
+SET @INSERT_FieldNames =
+'
+  user_id
+  ,emp_nm
+  ,repeats  
+'
+		
+
+SET @Insert_FileName = @FilePath + @Insert_FileName
+SET @SQL_INSERT =  'INSERT INTO OPENDATASOURCE'
+SET @SQL_INSERT = @SQL_INSERT + '(''Microsoft.ACE.OLEDB.12.0'',''Data Source='
+SET @SQL_INSERT = @SQL_INSERT + @Insert_FileName + ';Extended Properties=''''Excel 12.0;HDR=' 
+SET @SQL_INSERT = @SQL_INSERT + @HDR + ''''''')...[' 
+SET @SQL_INSERT = @SQL_INSERT + @SheetName + ']'
+
+SET @SQL_INSERT = @SQL_INSERT + ' select '+@INSERT_FieldNames + '  from  
+               #TempRepeats'
+
+EXEC (@SQL_INSERT)
+ 
+
+
+ 
+SET @INSERT_FieldNames =
+'  RPT_MTH
+  ,leadership_nm
+  ,call_dt  
+'
+		
+ set @SheetName = 'outbound_detail$'
+ 
+SET @SQL_INSERT =  'INSERT INTO OPENDATASOURCE'
+SET @SQL_INSERT = @SQL_INSERT + '(''Microsoft.ACE.OLEDB.12.0'',''Data Source='
+SET @SQL_INSERT = @SQL_INSERT + @Insert_FileName + ';Extended Properties=''''Excel 12.0;HDR=' 
+SET @SQL_INSERT = @SQL_INSERT + @HDR + ''''''')...[' 
+SET @SQL_INSERT = @SQL_INSERT + @SheetName + ']'
+
+SET @SQL_INSERT = @SQL_INSERT + ' select '+@INSERT_FieldNames + '  from  
+               #accaredetail '
+
+
+ 
+EXEC (@SQL_INSERT)
+ 
+set @email_body = 'Please see attached file.'
+set @email_subject ='Care auto coach repeats'  
+SET NOCOUNT ON 
+EXEC 
+ msdb.dbo.sp_send_dbmail
+    @profile_name = 'rmc_customer service',
+    @recipients='',---------'andrea.perkins@verizonwireless.com',
+    @copy_recipients ='',-----'ereka.richardson@verizonwireless.com', 
+	@blind_copy_recipients ='william.green.iv@verizon.com',
+    @subject= @email_subject,
+    @body=@email_body,
+	@body_format = 'HTML',
+	@importance ='High',
+    @file_attachments  = @Insert_FileName
+   
+	
+
+	
+SET NOCOUNT off
+
+
+
+	
+SET NOCOUNT off
+
+
+
+
+
+
