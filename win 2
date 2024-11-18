@@ -1,0 +1,135 @@
+USE [care]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+ALTER PROCEDURE [dbo].[care_autocoach_offenders_v2]
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Declare Variables
+    DECLARE @filestr VARCHAR(2000);   
+    DECLARE @filename VARCHAR(1000) = 'Care_auto_coach_repeats.xlsx'; 
+    DECLARE @FilePath VARCHAR(1000) = 'D:\temp\';
+    DECLARE @Insert_FileName VARCHAR(2000) = @FilePath + @filename;
+    DECLARE @INSERT_FieldNames VARCHAR(2000);
+    DECLARE @SheetName VARCHAR(100);
+    DECLARE @SQL_INSERT VARCHAR(4000);
+    DECLARE @HDR VARCHAR(3) = 'Yes';
+    DECLARE @email_body VARCHAR(1000) = 'Please see attached file.';
+    DECLARE @email_subject VARCHAR(50) = 'Care auto coach - Summary and Details';
+
+    -- Copy Excel Template
+    SET @filestr = 'copy \\tdcwpnc4vw005\NCRM_Reporting\care\autocoach\template_acrepeatv2.xlsx ' + @Insert_FileName + ' /y';
+    EXEC master..xp_cmdshell @filestr;
+
+    -- Step 1: Create Temporary Table for Repeats
+    IF OBJECT_ID('tempdb..#TempRepeats') IS NOT NULL
+        DROP TABLE #TempRepeats;
+
+    SELECT 
+        user_id,
+        emp_nm,
+        COUNT(*) AS repeats
+    INTO #TempRepeats
+    FROM care.dbo.rmc_care_outbound_calls_same_name_detail
+    WHERE 
+        call_dt > DATEADD(month, -24, GETDATE()) -- Last 24 months
+    GROUP BY 
+        user_id,
+        emp_nm
+    HAVING 
+        COUNT(*) > 2;
+
+    -- Step 2: Create Detailed Temporary Table
+    IF OBJECT_ID('tempdb..#accaredetail') IS NOT NULL
+        DROP TABLE #accaredetail;
+
+    SELECT 
+        a.*,
+        b.repeats
+    INTO #accaredetail
+    FROM care.dbo.rmc_care_outbound_calls_same_name_detail a
+    JOIN #TempRepeats b ON a.user_id = b.user_id
+    ORDER BY a.user_id;
+
+    -- Added Code Starts Here --
+    -- Step 1: Create Temporary Tables for Summary and Detail
+    IF OBJECT_ID('tempdb..#TempSummary') IS NOT NULL
+        DROP TABLE #TempSummary;
+
+    SELECT 
+        user_id,
+        emp_nm,
+        COUNT(*) AS repeats
+    INTO #TempSummary
+    FROM care.dbo.rmc_care_outbound_calls_same_name_detail
+    WHERE 
+        call_dt > DATEADD(month, -24, GETDATE()) -- Last 24 months
+    GROUP BY 
+        user_id,
+        emp_nm
+    HAVING 
+        COUNT(*) > 2;
+
+    IF OBJECT_ID('tempdb..#TempDetail') IS NOT NULL
+        DROP TABLE #TempDetail;
+
+    SELECT 
+        user_id,
+        emp_nm,
+        RPT_MTH,
+        leadership_nm,
+        call_dt
+    INTO #TempDetail
+    FROM care.dbo.rmc_care_outbound_calls_same_name_detail
+    WHERE 
+        call_dt > DATEADD(month, -24, GETDATE());
+
+    -- Step 2: Export Summary Data to Excel
+    DECLARE @SummarySheetName VARCHAR(100) = 'outbound_summary$';
+
+    SET @INSERT_FieldNames = '
+        user_id,
+        emp_nm,
+        repeats
+    ';
+
+    SET @SQL_INSERT = 'INSERT INTO OPENDATASOURCE(''Microsoft.ACE.OLEDB.12.0'', ''Data Source=' + @Insert_FileName + ';Extended Properties=''''Excel 12.0;HDR=Yes'''')...[' + @SummarySheetName + '] ' +
+                      'SELECT ' + @INSERT_FieldNames + ' FROM #TempSummary';
+
+    EXEC (@SQL_INSERT);
+
+    -- Step 3: Export Detail Data to Excel
+    DECLARE @DetailSheetName VARCHAR(100) = 'outbound_detail$';
+
+    SET @INSERT_FieldNames = '
+        user_id,
+        emp_nm,
+        RPT_MTH,
+        leadership_nm,
+        call_dt
+    ';
+
+    SET @SQL_INSERT = 'INSERT INTO OPENDATASOURCE(''Microsoft.ACE.OLEDB.12.0'', ''Data Source=' + @Insert_FileName + ';Extended Properties=''''Excel 12.0;HDR=Yes'''')...[' + @DetailSheetName + '] ' +
+                      'SELECT ' + @INSERT_FieldNames + ' FROM #TempDetail';
+
+    EXEC (@SQL_INSERT);
+    -- Added Code Ends Here --
+
+    -- Send Email with File Attachment
+    EXEC msdb.dbo.sp_send_dbmail
+        @profile_name = 'rmc_customer service',
+        @recipients = 'manager@example.com',  -- Update as needed
+        @copy_recipients = 'teamlead@example.com',  -- Update as needed
+        @blind_copy_recipients = 'william.green.iv@verizon.com',
+        @subject = @email_subject,
+        @body = @email_body,
+        @file_attachments = @Insert_FileName;
+
+    SET NOCOUNT OFF;
+END;
+GO
