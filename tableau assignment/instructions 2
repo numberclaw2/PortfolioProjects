@@ -1,0 +1,71 @@
+Absolutely! Let’s break down Step 1: Creating the 1. User Download Worksheet in a beginner-friendly way.
+
+Step 1: Creating the 1. User Download Worksheet
+
+1. Open Tableau and Connect to the Inside Sales Data
+
+	1.	Open Tableau Desktop.
+	2.	On the start page, click Connect → choose the data type (e.g., Excel, database).
+	3.	Locate and select the Inside Sales dataset.
+	4.	Drag the required data source to the canvas in the Data Source tab.
+
+2. Create a New Worksheet
+
+	1.	In Tableau, click the New Worksheet button at the bottom of the interface (a small sheet icon).
+	2.	Rename the worksheet:
+	•	Right-click the worksheet tab (e.g., “Sheet 1”) → click Rename → type 1. User Download.
+
+3. Build the Table (Cross-Tab)
+
+Tableau uses a drag-and-drop interface to build visualizations. Here’s how to create the user download table:
+	•	Add User Identification Fields:
+	1.	Drag DIRECTOR_USER_ID from the Data Pane to Rows.
+	2.	Drag DIRECTOR_VENDOR_NM to Rows (to display the user’s name).
+	•	Add Metrics:
+	1.	Drag METRIC_NUM_VALUE to Columns.
+	2.	Drag METRIC_DEN_VALUE to Columns.
+	3.	Create a calculated field for percentages:
+	•	Go to the top menu → click Analysis → select Create Calculated Field.
+	•	Name it Metric Percentage and use the formula:
+
+[METRIC_NUM_VALUE] / [METRIC_DEN_VALUE]
+
+
+	•	Click OK.
+	•	Drag Metric Percentage to Columns.
+
+	•	Add Hierarchy Fields:
+	1.	Drag fields like SUPERVISOR_USER_ID, SUPV_NM to Rows under the user ID and name fields to create hierarchy.
+
+4. Add Filters
+
+Filters allow you to refine the data displayed in the worksheet.
+	•	Drag the following fields from the Data Pane to the Filters shelf:
+	•	SUPERVISOR_USER_ID (to filter by supervisor).
+	•	SUPV_NM (to filter by region or district).
+	•	Configure the filters:
+	•	Right-click each field in the Filters shelf → click Show Filter.
+	•	Filters will appear on the right side of the worksheet for user interaction.
+
+5. Customize the Table
+
+	•	Format headers:
+	•	Right-click a column or row header → click Format → customize font size, alignment, and colors.
+	•	Adjust the number format for percentages:
+	•	Right-click Metric Percentage in the Columns shelf → click Format.
+	•	Set the format to Percentage with one decimal place.
+
+6. Validate the Worksheet
+
+	•	Check the data displayed in the table to ensure it matches your expectations.
+	•	Cross-check a few rows to verify metrics are accurate (e.g., Metric Percentage = METRIC_NUM_VALUE / METRIC_DEN_VALUE).
+
+7. Save Your Work
+
+	•	Save the workbook by going to File → Save As → name the file appropriately (e.g., User_Scorecard_Workbook.twbx).
+
+Your 1. User Download worksheet is now ready!
+
+This will display user-level data, including metrics and hierarchy details, with filters for refining the view.
+
+Would you like further help with specific aspects of this step, or should we move on to Step 2: Creating the 1. User MoM Download Worksheet?
