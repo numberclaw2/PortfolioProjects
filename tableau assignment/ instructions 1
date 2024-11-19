@@ -1,0 +1,55 @@
+Mapping Fields from the Inside Sales Dataset to the User Scorecard
+
+Here is the preliminary mapping based on the fields available in the Inside Sales dataset and the fields required for the User Scorecard:
+
+Mapped Fields
+
+	1.	User Identification:
+	•	complio_user_id → DIRECTOR_USER_ID
+	•	complio_user_nm → DIRECTOR_VENDOR_NM
+	2.	Metrics:
+	•	Metric Num Value → METRIC_NUM_VALUE
+	•	Metric Den Value → METRIC_DEN_VALUE
+	•	Metric Num Nm → METRIC_NUM_NM
+	•	Metric Den Nm → METRIC_DEN_NM
+	3.	Hierarchy Dimensions:
+	•	AGENT_AREA_DESC → SUPERVISOR_USER_ID
+	•	AGENT_DISTRICT_DESC → SUPV_NM
+	•	AGENT_REG_DESC → ASSOC_DIR/VENDOR_LOCATION
+	4.	Month-over-Month Fields:
+	•	MOM_MTH → MOM_MTH
+	•	Calculation_4378624796690030606 → MoM Show Panel
+	5.	Calculated Metrics:
+	•	Metric percentages and ratios will need to be recreated using the fields above (e.g., METRIC_NUM_VALUE / METRIC_DEN_VALUE).
+
+Next Steps: Step-by-Step Instructions to Build the User Scorecard
+
+	1.	Create the 1. User Download Worksheet:
+	•	Data Source: Connect to the Inside Sales dataset.
+	•	Add Fields:
+	•	User fields: DIRECTOR_USER_ID, DIRECTOR_VENDOR_NM.
+	•	Metrics: METRIC_NUM_VALUE, METRIC_DEN_VALUE, and calculated percentage fields.
+	•	Hierarchy fields: SUPERVISOR_USER_ID, SUPV_NM.
+	•	Filters:
+	•	Add filters for hierarchy dimensions (e.g., by area, district, region).
+	•	Visualization: Use a table or cross-tab to display user-level metrics.
+	2.	Create the 1. User MoM Download Worksheet:
+	•	Data Source: Use the Inside Sales dataset.
+	•	Add Fields:
+	•	Include MOM_MTH for Month-over-Month comparisons.
+	•	Use calculated fields for MoM metrics (e.g., ratios, percentages).
+	•	Filters: Add a date range filter on MOM_MTH.
+	3.	Rebuild Calculated Fields:
+	•	Create calculated fields for:
+	•	Metric Percentages: (METRIC_NUM_VALUE / METRIC_DEN_VALUE) * 100.
+	•	Month-over-Month Comparisons: (Current Month Metric - Previous Month Metric) / Previous Month Metric.
+	4.	Build the User Scorecard Dashboard:
+	•	Add the worksheets (1. User Download, 1. User MoM Download) to a dashboard.
+	•	Include interactivity:
+	•	Filters for hierarchy levels.
+	•	Toggles for switching between metrics or views.
+	5.	Test the Scorecard:
+	•	Verify metrics and calculations for a few sample users.
+	•	Test filters and toggles for functionality.
+
+Would you like more detailed Tableau instructions for any specific step? ￼
