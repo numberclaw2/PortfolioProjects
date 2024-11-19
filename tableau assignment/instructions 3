@@ -1,0 +1,148 @@
+Step-by-Step Guide to Complete the Task: Recreate the User Scorecard for Inside Sales
+
+This guide provides all the necessary steps, including validating the data, creating calculated fields, adding metrics, and building the worksheet. Follow these steps in sequence to complete your assignment.
+
+1. Connect to the Inside Sales Data
+
+	1.	Open Tableau Desktop.
+	2.	Go to File → Open.
+	3.	Select the Inside Sales Tableau Data Source file you provided (NTL_PRD_QMVM.RMC_INSIDE_SALES_MARKET_SCORECARD_DASH.tdsx).
+	4.	The data source should now appear in the Data Pane on the left.
+
+2. Validate Data at Rep/User Level
+
+	1.	Drag the following fields to the Rows shelf to confirm user-level granularity:
+	•	DIRECTOR_USER_ID (User ID).
+	•	DIRECTOR_VENDOR_NM (User Name).
+	2.	Drag a measure like METRIC_NUM_VALUE to Columns.
+	3.	Check:
+	•	If each row represents a unique user or rep (identified by DIRECTOR_USER_ID and DIRECTOR_VENDOR_NM), the data is at the correct granularity.
+	•	If data is aggregated at a higher level (e.g., region), use fields like SUPERVISOR_USER_ID or AD_LOC_NM to drill down to the user/rep level.
+
+3. Create the 1. User Download Worksheet
+
+Step 3.1: Create the Worksheet
+
+	1.	Click the New Worksheet button (a small tab icon at the bottom of Tableau).
+	2.	Rename the worksheet:
+	•	Right-click the tab → select Rename → name it 1. User Download.
+
+Step 3.2: Add User Identification Fields
+
+	1.	Drag DIRECTOR_USER_ID to the Rows shelf.
+	2.	Drag DIRECTOR_VENDOR_NM to the Rows shelf (this will show the user name alongside the user ID).
+
+Step 3.3: Add Metrics
+
+Add Pre-Existing Metrics
+
+	1.	Drag the following measures to the Columns shelf:
+	•	METRIC_NUM_VALUE (Numerator).
+	•	METRIC_DEN_VALUE (Denominator).
+	•	This will display the raw numerical data for each user.
+
+Create a Calculated Field for a Percentage
+
+If your manager expects performance as a percentage, create a calculated field:
+	1.	Go to the top menu → Analysis → Create Calculated Field.
+	2.	Name the field Metric Percentage.
+	3.	Enter the formula:
+
+[METRIC_NUM_VALUE] / [METRIC_DEN_VALUE]
+
+
+	4.	Click OK.
+	5.	Drag Metric Percentage from the Data Pane to the Columns shelf.
+	6.	Format the percentage:
+	•	Right-click the Metric Percentage column header → Format → set it to Percentage with 1–2 decimal places.
+
+Step 3.4: Add Filters
+
+	1.	Drag the following fields to the Filters shelf:
+	•	ACT_DT: Filter by date range (optional if activity dates are relevant).
+	•	AD_LOC_NM: Filter by location (optional, if users are location-specific).
+	•	SUPERVISOR_USER_ID: Filter by supervisor, if hierarchy is relevant.
+	2.	For each field, configure the filter:
+	•	Right-click the field in the Filters shelf → select Show Filter.
+	•	Filters will now appear on the right-hand side for interaction.
+
+Step 3.5: Customize the Table
+
+	1.	Format headers and rows:
+	•	Right-click a column or row header → Format → adjust font sizes, colors, or alignment.
+	2.	Adjust number formatting for metrics:
+	•	Right-click Metric Percentage → Format → set the format to percentages.
+
+4. Create the 1. User MoM Download Worksheet
+
+The Month-over-Month (MoM) worksheet will compare metrics over time.
+
+Step 4.1: Create the Worksheet
+
+	1.	Click the New Worksheet button and rename it 1. User MoM Download.
+
+Step 4.2: Add Fields
+
+	1.	Drag the following fields to the Rows shelf:
+	•	DIRECTOR_USER_ID (User ID).
+	•	DIRECTOR_VENDOR_NM (User Name).
+	2.	Drag the following to the Columns shelf:
+	•	MOM_MTH (Month field for MoM analysis).
+	•	METRIC_NUM_VALUE (Numerator for the current month).
+	•	METRIC_DEN_VALUE (Denominator for the current month).
+
+Step 4.3: Create MoM Calculations
+
+If MoM comparisons are required:
+	1.	Create a calculated field for MoM change:
+	•	Go to Analysis → Create Calculated Field.
+	•	Name it MoM Change %.
+	•	Enter the formula:
+
+(ZN([Current Month Metric]) - ZN([Previous Month Metric])) / ZN([Previous Month Metric])
+
+
+	•	Replace [Current Month Metric] and [Previous Month Metric] with the appropriate fields.
+
+	2.	Drag MoM Change % to Columns.
+	3.	Format it as a percentage.
+
+Step 4.4: Add Filters
+
+	1.	Drag MOM_MTH to the Filters shelf.
+	2.	Configure the filter:
+	•	Right-click it → Show Filter → set it to display only the relevant date range (e.g., last 12 months).
+
+5. Build the User Scorecard Dashboard
+
+	1.	Click the New Dashboard button (a window icon at the bottom of Tableau).
+	2.	Rename the dashboard User Scorecard.
+	3.	Drag the two worksheets (1. User Download and 1. User MoM Download) onto the dashboard canvas.
+
+Step 5.1: Add Interactivity
+
+	1.	Add filters to the dashboard:
+	•	Drag filters from the worksheets to the dashboard (e.g., date, location).
+	•	Ensure filters apply to all relevant sheets.
+	2.	Add parameters for toggling metrics (optional, if required by the original design).
+
+6. Validate and Save
+
+	1.	Cross-check the dashboard against the original User Scorecard:
+	•	Do the fields match?
+	•	Are metrics and calculations accurate?
+	•	Do filters work correctly?
+	2.	Save the workbook:
+	•	Go to File → Save As → name it appropriately (e.g., Inside Sales User Scorecard.twbx).
+
+Optional: Troubleshooting
+
+	•	If data doesn’t display correctly:
+	•	Double-check field mappings (e.g., DIRECTOR_USER_ID vs. complio_user_id).
+	•	Verify the granularity of the data.
+	•	If metrics don’t match expectations:
+	•	Revisit calculated fields to ensure formulas align with requirements.
+
+Final Note
+
+By following these steps, you will successfully recreate the User Scorecard from the Indirect Scorecard using the Inside Sales data. Let me know if you need further assistance with any specific part of the process!
