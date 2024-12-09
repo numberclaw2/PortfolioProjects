@@ -1,0 +1,44 @@
+CREATE MULTISET VOLATILE TABLE BLEND_Detail_CARE, NO Log
+AS                
+(
+SELECT
+    Td_Month_Begin(Current_Date) AS rpt_mth,
+    b.New_Act_MTN,
+    a.VSN_CUST_TYPE_CD,
+    a.CUST_ID,
+    a.ACCT_NUM,
+    a.CUST_LINE_SEQ_ID,
+    b.LINE_ACT_DT,
+    a.LINE_TERM_DT,
+    b.USER_ID,
+    a.DEACT_CD,
+    a.DEACT_DESC,
+    a.MTN_STATUS_IND,
+    a.Disc_MTN,
+    a.ESN_NUM,
+    a.TRIM_ESN_NUM,
+    a.SIM_NUM,
+    a.PROD_NM,
+    a.TIER,
+    a.Disc_NT_User_ID,
+    a.Disc_NT_User_NM,
+    a.Disc_NT_User_Dept
+FROM (
+    SELECT DISTINCT
+        CUST_ID,
+        ACCT_NUM,
+        MTN AS New_Act_MTN,
+        LINE_ACT_DT,
+        ROW_NUMBER() OVER (PARTITION BY MTN ORDER BY LINE_ACT_DT DESC) AS Row_Num
+    FROM NEW_LINES2_CARE
+) AS b
+JOIN DISCO3 AS a
+    ON a.CUST_ID = b.CUST_ID 
+    AND a.ACCT_NUM = b.ACCT_NUM
+WHERE b.Row_Num = 1 -- Ensures no duplicate values in New_Act_MTN
+  AND a.LINE_TERM_DT BETWEEN b.LINE_ACT_DT AND b.LINE_ACT_DT + INTERVAL '30' DAY
+  AND a.VSN_CUST_TYPE_CD IN ('PE', 'ME')
+)
+WITH DATA 
+PRIMARY INDEX (cust_id, ACCT_NUM, CUST_LINE_SEQ_ID)                                                                                          
+ON COMMIT PRESERVE ROWS;
