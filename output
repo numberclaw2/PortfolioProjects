@@ -1,0 +1,5 @@
+Statement 1: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:01:00
+Statement 2: SELECT completed. 1 rows returned. Elapsed Time = 00:00:02
+Statement 3: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:01:19
+Statement 4: CREATE TABLE Failed.  [3807] Object 'NEW_LINES2_CARE' does not exist.
+Output directed to Answer window
