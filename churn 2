@@ -1,0 +1,394 @@
+CREATE MULTISET VOLATILE TABLE v_lag_one_month
+AS
+(
+SELECT
+    CASE WHEN  Current_Date = Td_Month_End (Current_Date) THEN Add_Months(Td_Month_Begin(Current_Date ),-1) ELSE Add_Months(Current_Date, -2)  END Begin_dt
+    ,CASE WHEN Current_Date = Td_Month_End (Current_Date) THEN Td_Month_End(Add_Months(Current_Date ,-1)) ELSE Add_Months(Current_Date , -1) - INTERVAL '1' DAY  END End_dt 
+    ,Add_Months(Current_Date  - Extract(DAY From Current_Date)+1, -2)  pm_Begin_dt
+    ,Td_Month_End(pm_Begin_dt) pm_end_dt 
+	,Td_Month_Begin(Current_Date)  AS rpt_mth
+	,Add_Months(rpt_mth, -1) AS pm_rpt_mth
+) WITH DATA PRIMARY INDEX( Begin_dt,End_dt) ON COMMIT PRESERVE ROWS;
+
+
+SEL * FROM v_lag_one_month;
+
+
+CREATE MULTISET VOLATILE TABLE NEW_LINES_CARE, NO Log  --289                                                                                              
+AS                                                                                                
+(                                                                                                
+SEL DISTINCT
+
+a.vsn_cust_type_cd                                                                                                                                                                              
+,a.cust_id
+,a.acct_num
+,a.cust_line_seq_id                                                                                            
+,a.line_act_dt      
+,a.line_term_dt
+,b.USER_ID
+,a.DEACT_CHANGE_REAS_CD AS DEACT_CD
+,e.CHANGE_REAS_DESC AS DEACT_DESC
+,a.cntrct_eff_dt                                                                                            
+,a.prepaid_ind  
+,a.MTN_STATUS_IND
+,a.mtn
+,a.PPLAN_EFF_DT
+,a.esn_change_reas_cd                                                                                  
+,a.esn_change_dt                                                                                                
+,Coalesce (a.eqp_device_id, a.esn_num) AS ESN_NUM    
+,CASE WHEN a.eqp_device_id IS NOT NULL THEN Substr(a.eqp_device_id,1,14) ELSE a.ESN_NUM END AS TRIM_ESN_NUM
+,CASE WHEN a.prod_nm LIKE '%sim%' THEN a.esn_num ELSE NULL END AS SIM_NUM
+,c.tier
+,Coalesce (a.device_prod_nm, a.prod_nm) AS PROD_NM
+,a.SLS_PRSN_ID                                                                                            
+,d.sls_prsn_nm
+,d.emp_id
+,f.LINE_IN_SVC_CNT
+,f.ACCT_TERM_DT
+,f.ACCT_STATUS_IND
+,CASE WHEN a.LINE_TERM_DT IS NOT NULL AND a.LINE_TERM_DT - a.LINE_ACT_DT < 31 THEN 1 ELSE 0 END AS WFG_DISCO --IF DISCONNECTED BEFORE 30 DAYS, IT'LL NOT COUNT TOWARD FALSE CHURN.
+,CASE WHEN c.DEVICE_BRAND_NM = 'VZ INTERNET GATEWAY' THEN 1 ELSE 0 END AS FWA_IND -- IF FWA LINE, DON'T COUNT TOWARD FALSE CHURN.
+
+FROM NTL_PRD_ALLVM.CUST_ACCT_LINE_V AS  a                                                                                                                                                                                                                        
+
+JOIN (
+-- Care Rep's activated lines
+SELECT DLA.CUST_ID
+	   , DLA.CUST_LINE_SEQ_ID
+	   , DLA.ACCT_NUM
+	   , DLA.MTN
+	   , DLA.USER_ID
+
+FROM NTL_PRD_ALLVM.DLA_SUM_FACT_V DLA
+INNER JOIN NTL_PRD_QMVM.HQCS_EMP_HIST_V ESH
+                  ON DLA.USER_ID = ESH.NETWORKID
+                  AND DLA.ACTIVITY_DT BETWEEN ESH.STARTDATE AND ESH.ENDDATE
+    INNER JOIN NTL_PRD_ALLVM.ICM_SUMMARY_FACT_V ICM
+      ON  DLA.CUST_ID   = ICM.CUST_ID
+      AND  DLA.ACTIVITY_DT = ICM.CALL_ANSWER_DT
+      AND ESH.ENTERPRISEID = ICM.EID
+WHERE ACTIVITY_DT >= ( SEL begin_dt FROM v_lag_one_month) --1240501
+AND ACTIVITY_CD = 'AC'
+
+) b
+
+ON a.CUST_ID = b.CUST_ID 
+AND a.CUST_LINE_SEQ_ID = b.CUST_LINE_SEQ_ID
+AND a.ACCT_NUM = b.ACCT_NUM
+AND a.MTN = b.MTN
+
+/*INNER JOIN NTL_PRD_QMTBLS.CONSUMER_RETAIL AS b                                                                                              
+ON  a.SLS_OUTLET_ID = b.SLS_OUTLET_ID */                                                   
+
+LEFT OUTER JOIN ntl_prd_allvm.device_dp_map_v AS c                                                                                                
+ON Coalesce (a.device_prod_nm, a.prod_nm) = c.prod_nm
+
+LEFT JOIN ntl_prd_allvm.EQUIPMENT_ITEM_V AS ei
+ON ei.EQP_PROD_NM = Coalesce (a.DEVICE_PROD_NM, a.PROD_NM)
+
+LEFT OUTER JOIN ntl_prd_allvm.sales_person_v AS d                                                                                                
+ON  a.sls_prsn_id = d.sls_prsn_id AND d.sor_id = 'v'    
+
+LEFT OUTER JOIN CHANGE_REASON_V AS e
+ON a.DEACT_CHANGE_REAS_CD  = e.CHANGE_REAS_CD
+AND e.SOR_ID = 'v'
+
+INNER JOIN CUST_ACCT_V AS f
+ON A.CUST_ID = f.CUST_ID
+AND A.ACCT_NUM = f.ACCT_NUM
+
+WHERE a.line_act_dt BETWEEN   ( SELECT begin_dt FROM  v_lag_one_month ) AND (SELECT end_dt FROM  v_lag_one_month ) 
+
+AND a.prepaid_ind = 'n' --All post paid activations
+AND ESN_NUM NOT IN ('STKMA', 'STKAA', 'STKHG', 'STKCQ','0000000000000000', '000000000000000', '111111111111111','1111111111111110','111111111111114','111111111111117','111111111111118','111111111111119')  --No one talk virtual products
+AND a.REV_GEN_IND = 'Y' --demos excluded
+AND f.LINE_IN_SVC_CNT <> 0 --no inactive customer accounts with zero lines
+--AND BI_STORE_STATUS_DESC <> 'Closed' --Open stores only
+)
+WITH DATA                                                                                                
+PRIMARY INDEX (cust_id, cust_line_seq_id)                                                                                                
+ON COMMIT PRESERVE ROWS        
+;
+
+
+CREATE MULTISET VOLATILE TABLE REACT_SCRUB_CARE, NO Log --289
+AS
+(
+SEL
+a.*
+FROM NEW_LINES_CARE AS  A
+LEFT OUTER JOIN DLY_LINE_ACTIVITY_V AS  b
+ON a.CUST_ID = b.CUST_ID
+AND  a.LINE_ACT_DT = b.ACTIVITY_DT
+AND a.CUST_LINE_SEQ_ID = b.CUST_LINE_SEQ_ID
+AND b.ACTIVITY_CD = 'RE'
+WHERE b.CUST_ID||'-'||b.CUST_LINE_SEQ_ID IS NULL --Reactivations are scrubbed
+AND a.WFG_DISCO = 0 --New lines disconnected before 30 days don't count toward false churn.
+AND a.FWA_IND = 0
+)
+WITH DATA
+PRIMARY INDEX (CUST_ID)
+ON COMMIT PRESERVE ROWS
+;
+
+-----------------------------
+/* *************** Error Handling ************ */
+.IF Errorcode <> 0 THEN .QUIT Errorcode;
+
+
+CREATE MULTISET VOLATILE TABLE NEW_LINES2_CARE, NO Log         --289                                                                                      
+AS                
+(
+SELECT DISTINCT A.*
+,a.LINE_TERM_DT - a.LINE_ACT_DT AS DAYS_ACTIVE
+,c.nm_first||' '||c.nm_last AS NETACE_USER_NM
+,b.netace_user_id
+,b.invc_num
+,b.PYMNT_DT
+,CASE WHEN B.SLS_TYPE = 'S' AND B.ITEM_CD LIKE ANY ('%SIM%')THEN 1 ELSE 0 END AS SIM_ONLY_ACT_IND
+,CASE WHEN (Instr(a.PROD_NM,'-E ',-1) >0 OR Instr(a.PROD_NM,'-2 ',-1) >0) THEN 1 ELSE 0 END AS ESIM_IND
+--,CASE WHEN B.STORE_NUM||'-'||B.INVC_NUM IS NULL THEN 1 ELSE 0 END AS TRAD_BYOD_IND
+FROM REACT_SCRUB_CARE AS A
+LEFT OUTER JOIN  POS_TRANS_V  AS B
+ON 1=1 --A.STORE_NUM =B.STORE_NUM
+AND A.CUST_ID = B.CUST_ID
+AND A.CUST_LINE_SEQ_ID = B.CUST_LINE_SEQ_ID
+AND B.ORDER_TYPE = 'PS'
+AND b.SLS_TYPE IN ('P','S')
+AND A.LINE_ACT_DT BETWEEN B.PYMNT_DT AND PYMNT_DT
+AND PYMNT_DT BETWEEN ( SELECT begin_dt FROM  v_lag_one_month ) AND (SELECT end_dt FROM  v_lag_one_month ) 
+LEFT JOIN 
+   ntl_prd_allvm.hr_employee_hist_v AS c
+ON b.netace_user_id=c.NT_USER_ID AND b.PYMNT_DT BETWEEN c.EFF_DT AND c.EXP_DT
+LEFT JOIN ntl_prd_allvm.sales_person_v AS d
+ON c.EMP_ID=d.EMP_ID
+QUALIFY Row_Number () Over (PARTITION BY  A.CUST_ID, A.CUST_LINE_SEQ_ID ORDER BY A.LINE_ACT_DT DESC) = 1
+  )
+WITH DATA                                                                                                
+PRIMARY INDEX (cust_id, cust_line_seq_id)                                                                                                
+ON COMMIT PRESERVE ROWS        
+;
+
+
+
+CREATE MULTISET VOLATILE TABLE DISCO, NO Log                                                                                                
+AS                
+(
+SELECT DISTINCT
+a.vsn_cust_type_cd    
+,c.prod_nm AS Deact_Prod_Nm
+,a.cust_id
+,a.acct_num
+,a.cust_line_seq_id                                                                                            
+,a.line_act_dt
+,a.line_term_dt
+,b.user_id
+,a.DEACT_CHANGE_REAS_CD AS DEACT_CD
+,e.CHANGE_REAS_DESC AS DEACT_DESC
+,a.cntrct_eff_dt                                                                                            
+,a.prepaid_ind  
+,a.MTN_STATUS_IND
+,a.mtn
+,a.PPLAN_EFF_DT
+,a.esn_change_reas_cd                                                                                  
+,a.esn_change_dt
+,b.NETACE_USER_NM
+,Coalesce (a.eqp_device_id, a.esn_num) AS ESN_NUM    
+,CASE WHEN a.eqp_device_id IS NOT NULL THEN Substr(a.eqp_device_id,1,14) ELSE a.ESN_NUM END AS TRIM_ESN_NUM
+,CASE WHEN a.prod_nm LIKE '%sim%' THEN a.esn_num ELSE NULL END AS SIM_NUM
+,Coalesce (a.device_prod_nm, a.prod_nm) AS PROD_NM
+,c.TIER
+--,a.SLS_PRSN_ID                                                                                            
+--,d.sls_prsn_nm
+--,d.emp_id
+,f.NT_USER_ID AS Disc_NT_User_ID
+,f.NM_FIRST||' '||f.NM_LAST AS Disc_NT_User_NM
+,f.DEPT_DESC AS Disc_NT_User_Dept
+,CASE WHEN a.LINE_TERM_DT IS NOT NULL AND a.LINE_TERM_DT - a.LINE_ACT_DT < 31 THEN 1 ELSE 0 END AS WFG_DISCO --IF DISCONNECTED BEFORE 30 DAYS, IT'LL NOT COUNT TOWARD FALSE CHURN.
+,CASE WHEN c.DEVICE_BRAND_NM = 'VZ INTERNET GATEWAY' THEN 1 ELSE 0 END AS FWA_IND  --IF FWA LINE, DON'T COUNT TOWARD FALSE CHURN.
+,a.line_term_dt - B.LINE_ACT_DT AS DAYS_BETWEEEN
+
+                                                                       
+FROM NTL_PRD_ALLVM.CUST_ACCT_LINE_V AS a                                                                                                                              
+                                                                                           
+INNER JOIN NEW_LINES2_CARE AS b                                                                                              
+ON  a.CUST_ID = b.CUST_ID
+AND a.cust_line_seq_id   <> b.cust_line_seq_id  
+                                                                                                                                                                                 
+LEFT OUTER JOIN ntl_prd_allvm.device_dp_map_v  AS c                                                                                                
+ON Coalesce (a.device_prod_nm, a.prod_nm) = c.prod_nm
+                                                                                     
+LEFT OUTER JOIN ntl_prd_allvm.sales_person_v AS d                                                                                                
+ON  a.sls_prsn_id = d.sls_prsn_id                                                                                            
+AND d.sor_id = 'v'  
+
+LEFT JOIN ntl_prd_allvm.hr_employee_hist_v AS f
+ON f.emp_id=d.emp_id AND a.line_term_dt BETWEEN f.EFF_DT AND f.EXP_DT
+
+INNER JOIN CHANGE_REASON_V AS e
+ON a.DEACT_CHANGE_REAS_CD  = e.CHANGE_REAS_CD
+AND e.SOR_ID = 'v'
+                                                                                           
+WHERE            
+a.MTN_STATUS_IND = 'd'
+AND a.line_term_dt BETWEEN b.line_act_dT AND b.line_act_dT + INTERVAL '30' DAY  
+AND a.DEACT_CHANGE_REAS_CD NOT IN ('91','90','36','PF','41','35','TC','FI','PP') --WFG and Involuntary disconnects (Fraud, Non Pay, Never Pay, 1st Party Fraud, T&C abuse, etc.) are removed from disconnect population.
+AND  (NOT(a.LINE_TERM_DT - a.LINE_ACT_DT < 31) OR a.LINE_TERM_DT IS NULL)
+AND c.DEVICE_BRAND_NM <> 'VZ INTERNET GATEWAY'
+)
+WITH DATA                                                                                                
+PRIMARY INDEX (cust_id, cust_line_seq_id)                                                                                                
+ON COMMIT PRESERVE ROWS        
+;
+
+-----------------------------
+/* *************** Error Handling ************ */
+.IF Errorcode <> 0 THEN .QUIT Errorcode;
+
+
+CREATE MULTISET VOLATILE TABLE DISCO2, NO Log                                                                                                
+AS                
+(
+SEL DISTINCT
+a.CUST_ID
+,a.ACCT_NUM
+,a.LINE_ACT_DT
+,a.line_term_dt
+,CASE WHEN a.CUST_ID IS NOT NULL THEN 1 ELSE 0 END AS LINES_LOST_IND
+,b.TOT_LINES_LOST
+FROM DISCO AS a
+INNER JOIN (
+SELECT
+--,Trunc(line_term_dt,'rm') AS line_term_dt
+--,store_num
+line_term_dt
+,cust_id
+,acct_num
+,Count (DISTINCT MTN) AS TOT_LINES_LOST
+FROM DISCO
+--WHERE WFG_DISCO=0
+GROUP BY 1,2,3
+) b
+ON  a.cust_id=b.cust_id AND a.acct_num=b.acct_num AND a.line_term_dt = b.line_term_dt  --YEAR(a.line_term_dt)=YEAR(b.line_term_dt) AND MONTH(a.line_term_dt)=MONTH(b.line_term_dt)
+--WHERE a.WFG_DISCO=0
+--GROUP BY 1,2,3,4
+)
+WITH DATA                                                                                                
+PRIMARY INDEX (CUST_ID)                                                                                              
+ON COMMIT PRESERVE ROWS      
+;
+
+-----------------------------
+/* *************** Error Handling ************ */
+.IF Errorcode <> 0 THEN .QUIT Errorcode;
+
+
+CREATE MULTISET VOLATILE TABLE DISCO3, NO Log                                                                                                
+AS                
+(
+SEL DISTINCT
+a.VSN_CUST_TYPE_CD--
+,a.CUST_ID--
+,a.ACCT_NUM--
+,a.CUST_LINE_SEQ_ID--
+--,Trunc (a.LINE_ACT_DT, 'rm') AS LINE_ACT_DT--
+,a.LINE_ACT_DT
+--,Trunc(a.LINE_TERM_DT, 'rm') AS LINE_TERM_DT--
+,a.LINE_TERM_DT
+,a.DEACT_CD--
+,a.DEACT_DESC--
+,a.MTN_STATUS_IND--
+,a.MTN AS Disc_MTN--
+,a.ESN_NUM--
+,a.TRIM_ESN_NUM--
+,a.SIM_NUM--
+,a.PROD_NM--
+,a.TIER--
+,a.Disc_NT_User_ID
+,a.Disc_NT_User_NM
+,a.Disc_NT_User_Dept
+,CASE WHEN a.CUST_ID IS NOT NULL THEN 1 ELSE 0 END AS LINES_LOST_IND
+,b.TOT_LINES_LOST
+FROM DISCO AS a
+INNER JOIN (
+SELECT
+--,Trunc(line_term_dt,'rm') AS line_term_dt
+--,store_num
+line_term_dt
+,cust_id
+,acct_num
+,Count (DISTINCT MTN) AS TOT_LINES_LOST
+FROM DISCO
+GROUP BY 1,2,3
+) b
+ON  a.cust_id=b.cust_id AND a.acct_num=b.acct_num AND a.line_term_dt = b.line_term_dt --YEAR(a.line_term_dt)=YEAR(b.line_term_dt) AND MONTH(a.line_term_dt)=MONTH(b.line_term_dt)
+--GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19
+)
+WITH DATA                                                                                                
+PRIMARY INDEX (CUST_ID)                                                                                              
+ON COMMIT PRESERVE ROWS      
+;
+
+
+
+CREATE MULTISET VOLATILE TABLE BLEND_Detail_CARE, NO Log                                                                                                
+AS                
+(
+SEL
+Td_Month_Begin(Current_Date) AS rpt_mth
+,b.mtn AS New_Act_MTN
+,a.VSN_CUST_TYPE_CD--
+,a.CUST_ID--
+,a.ACCT_NUM--
+,a.CUST_LINE_SEQ_ID--
+,b.LINE_ACT_DT--
+,a.LINE_TERM_DT--
+,b.user_id
+,a.DEACT_CD--
+,a.DEACT_DESC--
+,a.MTN_STATUS_IND--
+,a.Disc_MTN--
+,a.ESN_NUM--
+,a.TRIM_ESN_NUM--
+,a.SIM_NUM--
+,a.PROD_NM--
+,a.TIER--
+,a.Disc_NT_User_ID
+,a.Disc_NT_User_NM
+,a.Disc_NT_User_Dept
+FROM DISCO3 AS a
+INNER JOIN NEW_LINES2_CARE AS b
+ON a.CUST_ID = b.CUST_ID AND a.ACCT_NUM = b.ACCT_NUM
+/*INNER JOIN NEW_LINES2 AS d
+ON a.cust_id=d.cust_id AND a.acct_num=d.acct_num*/
+/*INNER JOIN NTL_PRD_QMTBLS.CONSUMER_RETAIL AS c                                                                                              
+ON  B.STORE_NUM = c.STORE_NUM*/
+WHERE   a.LINE_TERM_DT BETWEEN b.line_act_dT AND b.line_act_dt + INTERVAL '30' DAY
+AND a.VSN_CUST_TYPE_CD IN ('PE','ME')
+)
+WITH DATA                                                                                                
+PRIMARY INDEX (cust_id,ACCT_NUM,CUST_LINE_SEQ_ID)                                                                                          
+ON COMMIT PRESERVE ROWS    
+;
+
+SEL 
+HR.Channel
+	,HR.Bus_Sgmnt_Desc
+	,HR.Job_Desc
+	,HR.Loc_Desc
+    ,HR.CENTER_TYPE			AS CENTER_TYPE
+    ,HR.USER_ID 
+    ,HR.EMP_ID 	
+    ,HR.Emp_Nm				AS EMP_NM
+    ,HR.Supv_Lvl1_Emp_Nm 		AS EMP_SUP
+    ,HR.Supv_Lvl2_Emp_Nm 		AS EMP_MGR
+    ,HR.Supv_Lvl3_Emp_Nm 		AS EMP_DIR
+    ,HR.Supv_Lvl4_Emp_Nm 		AS EMP_VP
+	,A.*
+	FROM BLEND_Detail_CARE A
+JOIN NTL_PRD_QMTBLS.RMC_CARE_REP_MAPPING_HIST HR                         
+ON HR.USER_ID = A.USER_ID    
+AND A.LINE_ACT_DT BETWEEN HR.EFF_DT AND HR.EXP_DT	
+
+WHERE vsn_cust_type_cd IN ('PE','ME')
+ORDER BY cust_id;
