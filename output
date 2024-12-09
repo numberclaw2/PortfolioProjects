@@ -1,6 +1,7 @@
-Statement 1: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:00:00
+Statement 1: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:00:01
 Statement 2: SELECT completed. 1 rows returned. Elapsed Time = 00:00:00
 Statement 3: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:00:08
-Statement 4: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:00:02
-Statement 5: CREATE TABLE Failed.  [3707] Syntax error, expected something like a 'SUCCEEDS' keyword or a 'MEETS' keyword or a 'PRECEDES' keyword or an 'IN' keyword or a 'CONTAINS' keyword between ')' and ')'.
+Statement 4: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:00:00
+Statement 5: CREATE TABLE completed. 0 rows processed. Elapsed Time = 00:00:04
+Statement 6: CREATE TABLE Failed.  [3807] Object 'DISCO3' does not exist.
 Output directed to Answer window
