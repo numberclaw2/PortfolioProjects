@@ -1,176 +1,34 @@
-CREATE MULTISET VOLATILE TABLE v_lag_one_month
-AS
-(
-SELECT
-    CASE 
-        WHEN Current_Date = Td_Month_End(Current_Date) THEN Add_Months(Td_Month_Begin(Current_Date), -1)
-        ELSE Add_Months(Current_Date, -2)
-    END AS Begin_dt,
-    CASE 
-        WHEN Current_Date = Td_Month_End(Current_Date) THEN Td_Month_End(Add_Months(Current_Date, -1))
-        ELSE Add_Months(Current_Date, -1) - INTERVAL '1' DAY
-    END AS End_dt,
-    Add_Months(Current_Date - Extract(DAY From Current_Date) + 1, -2) AS pm_Begin_dt,
-    Td_Month_End(Add_Months(Current_Date - Extract(DAY From Current_Date) + 1, -2)) AS pm_end_dt,
-    Td_Month_Begin(Current_Date) AS rpt_mth,
-    Add_Months(Td_Month_Begin(Current_Date), -1) AS pm_rpt_mth
-) WITH DATA 
-PRIMARY INDEX (Begin_dt, End_dt) 
-ON COMMIT PRESERVE ROWS;
-
-SEL * FROM v_lag_one_month;
-
-CREATE MULTISET VOLATILE TABLE NEW_LINES_CARE, NO Log
-AS
-(
-SELECT DISTINCT
-    a.vsn_cust_type_cd,
-    a.cust_id,
-    a.acct_num,
-    a.cust_line_seq_id,
-    a.line_act_dt,
-    a.line_term_dt,
-    b.USER_ID,
-    a.DEACT_CHANGE_REAS_CD AS DEACT_CD,
-    e.CHANGE_REAS_DESC AS DEACT_DESC,
-    a.cntrct_eff_dt,
-    a.prepaid_ind,
-    a.MTN_STATUS_IND,
-    a.mtn,
-    a.PPLAN_EFF_DT,
-    a.esn_change_reas_cd,
-    a.esn_change_dt,
-    COALESCE(a.eqp_device_id, a.esn_num) AS ESN_NUM,
-    CASE 
-        WHEN a.eqp_device_id IS NOT NULL THEN Substr(a.eqp_device_id, 1, 14) 
-        ELSE a.ESN_NUM 
-    END AS TRIM_ESN_NUM,
-    CASE 
-        WHEN a.prod_nm LIKE '%sim%' THEN a.esn_num 
-        ELSE NULL 
-    END AS SIM_NUM,
-    c.tier,
-    COALESCE(a.device_prod_nm, a.prod_nm) AS PROD_NM,
-    a.SLS_PRSN_ID,
-    d.sls_prsn_nm,
-    d.emp_id,
-    f.LINE_IN_SVC_CNT,
-    f.ACCT_TERM_DT,
-    f.ACCT_STATUS_IND,
-    CASE 
-        WHEN a.LINE_TERM_DT IS NOT NULL AND a.LINE_TERM_DT - a.LINE_ACT_DT < 31 THEN 1 
-        ELSE 0 
-    END AS WFG_DISCO,
-    CASE 
-        WHEN c.DEVICE_BRAND_NM = 'VZ INTERNET GATEWAY' THEN 1 
-        ELSE 0 
-    END AS FWA_IND
-FROM NTL_PRD_ALLVM.CUST_ACCT_LINE_V AS a
-JOIN (
-    SELECT DLA.CUST_ID,
-           DLA.CUST_LINE_SEQ_ID,
-           DLA.ACCT_NUM,
-           DLA.MTN,
-           DLA.USER_ID
-    FROM NTL_PRD_ALLVM.DLA_SUM_FACT_V AS DLA
-    INNER JOIN NTL_PRD_QMVM.HQCS_EMP_HIST_V AS ESH
-        ON DLA.USER_ID = ESH.NETWORKID
-        AND DLA.ACTIVITY_DT BETWEEN ESH.STARTDATE AND ESH.ENDDATE
-    INNER JOIN NTL_PRD_ALLVM.ICM_SUMMARY_FACT_V AS ICM
-        ON DLA.CUST_ID = ICM.CUST_ID
-        AND DLA.ACTIVITY_DT = ICM.CALL_ANSWER_DT
-        AND ESH.ENTERPRISEID = ICM.EID
-    WHERE ACTIVITY_DT >= (SELECT Begin_dt FROM v_lag_one_month)
-      AND ACTIVITY_CD = 'AC'
-) AS b
-    ON a.CUST_ID = b.CUST_ID 
-    AND a.CUST_LINE_SEQ_ID = b.CUST_LINE_SEQ_ID
-    AND a.ACCT_NUM = b.ACCT_NUM
-    AND a.MTN = b.MTN
-LEFT OUTER JOIN ntl_prd_allvm.device_dp_map_v AS c
-    ON COALESCE(a.device_prod_nm, a.prod_nm) = c.prod_nm
-LEFT OUTER JOIN ntl_prd_allvm.sales_person_v AS d
-    ON a.sls_prsn_id = d.sls_prsn_id AND d.sor_id = 'v'
-LEFT OUTER JOIN CHANGE_REASON_V AS e
-    ON a.DEACT_CHANGE_REAS_CD = e.CHANGE_REAS_CD AND e.SOR_ID = 'v'
-INNER JOIN CUST_ACCT_V AS f
-    ON a.CUST_ID = f.CUST_ID AND a.ACCT_NUM = f.ACCT_NUM
-WHERE a.line_act_dt BETWEEN (SELECT Begin_dt FROM v_lag_one_month) AND (SELECT End_dt FROM v_lag_one_month)
-    AND a.prepaid_ind = 'n'
-    AND COALESCE(a.eqp_device_id, a.esn_num) NOT IN (
-        'STKMA', 'STKAA', 'STKHG', 'STKCQ', '0000000000000000', 
-        '000000000000000', '111111111111111', '1111111111111110', 
-        '111111111111114', '111111111111117', '111111111111118', 
-        '111111111111119'
-    )
-    AND a.REV_GEN_IND = 'Y'
-    AND f.LINE_IN_SVC_CNT <> 0
-)
-WITH DATA 
-PRIMARY INDEX (cust_id, cust_line_seq_id) 
-ON COMMIT PRESERVE ROWS;
-
-CREATE MULTISET VOLATILE TABLE BLEND_Detail_CARE, NO Log
+CREATE MULTISET VOLATILE TABLE BLEND_Detail_CARE, NO LOG
 AS                
 (
-SELECT
-    Td_Month_Begin(Current_Date) AS rpt_mth,
-    b.New_Act_MTN,
-    a.VSN_CUST_TYPE_CD,
-    a.CUST_ID,
-    a.ACCT_NUM,
-    a.CUST_LINE_SEQ_ID,
-    b.LINE_ACT_DT,
-    a.LINE_TERM_DT,
-    b.USER_ID,
-    a.DEACT_CD,
-    a.DEACT_DESC,
-    a.MTN_STATUS_IND,
-    a.Disc_MTN,
-    a.ESN_NUM,
-    a.TRIM_ESN_NUM,
-    a.SIM_NUM,
-    a.PROD_NM,
-    a.TIER,
-    a.Disc_NT_User_ID,
-    a.Disc_NT_User_NM,
-    a.Disc_NT_User_Dept
-FROM (
-    SELECT 
-        CUST_ID,
-        ACCT_NUM,
-        MTN AS New_Act_MTN,
-        MIN(LINE_ACT_DT) AS LINE_ACT_DT -- Keep the earliest occurrence
-    FROM NEW_LINES2_CARE
-    GROUP BY CUST_ID, ACCT_NUM, MTN
-) AS b
-JOIN DISCO3 AS a
-    ON a.CUST_ID = b.CUST_ID 
-    AND a.ACCT_NUM = b.ACCT_NUM
-WHERE a.LINE_TERM_DT BETWEEN b.LINE_ACT_DT AND b.LINE_ACT_DT + INTERVAL '30' DAY
-  AND a.VSN_CUST_TYPE_CD IN ('PE', 'ME')
+SEL
+   Td_Month_Begin(Current_Date) AS rpt_mth,
+   b.mtn AS New_Act_MTN,
+   a.VSN_CUST_TYPE_CD,
+   a.CUST_ID,
+   a.ACCT_NUM,
+   a.CUST_LINE_SEQ_ID,
+   b.LINE_ACT_DT,
+   b.user_id,
+   a.DEACT_CD,
+   a.DEACT_DESC,
+   a.MTN_STATUS_IND,
+   a.Disc_MTN,
+   a.ESN_NUM,
+   a.TRIM_ESN_NUM,
+   a.SIM_NUM,
+   a.PROD_NM,
+   a.TIER,
+   a.Disc_NT_User_ID,
+   a.Disc_NT_User_NM,
+   a.Disc_NT_User_Dept
+FROM DISCO3 AS a
+INNER JOIN NEW_LINES2_CARE AS b
+   ON a.CUST_ID = b.CUST_ID AND a.ACCT_NUM = b.ACCT_NUM
+WHERE a.LINE_TERM_DT BETWEEN b.line_act_dt AND b.line_act_dt + INTERVAL '30' DAY
+  AND a.VSN_CUST_TYPE_CD IN ('PE','ME')
+QUALIFY COUNT(*) OVER (PARTITION BY b.mtn) = 1
 )
-WITH DATA 
-PRIMARY INDEX (cust_id, ACCT_NUM, CUST_LINE_SEQ_ID)                                                                                          
+WITH DATA
+PRIMARY INDEX (cust_id, ACCT_NUM, CUST_LINE_SEQ_ID)
 ON COMMIT PRESERVE ROWS;
-
-SEL 
-    HR.Channel,
-    HR.Bus_Sgmnt_Desc,
-    HR.Job_Desc,
-    HR.Loc_Desc,
-    HR.CENTER_TYPE AS CENTER_TYPE,
-    HR.USER_ID,
-    HR.EMP_ID,
-    HR.Emp_Nm AS EMP_NM,
-    HR.Supv_Lvl1_Emp_Nm AS EMP_SUP,
-    HR.Supv_Lvl2_Emp_Nm AS EMP_MGR,
-    HR.Supv_Lvl3_Emp_Nm AS EMP_DIR,
-    HR.Supv_Lvl4_Emp_Nm AS EMP_VP,
-    A.*
-FROM BLEND_Detail_CARE AS A
-JOIN NTL_PRD_QMTBLS.RMC_CARE_REP_MAPPING_HIST AS HR                         
-    ON HR.USER_ID = A.USER_ID    
-    AND A.LINE_ACT_DT BETWEEN HR.EFF_DT AND HR.EXP_DT
-WHERE VSN_CUST_TYPE_CD IN ('PE', 'ME')
-ORDER BY CUST_ID;
