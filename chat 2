@@ -1,0 +1,488 @@
+agent_dialogue_start_time: 4.63
+agent_dialogue: Thank you for calling Verizon. My name is [PERSON_NAME]. May I have your name, please?
+
+customer_dialogue_start_time: 9.33
+customer_dialogue: Yes, [PERSON_NAME]. My name is [PERSON_NAME], [PERSON_NAME].
+
+agent_dialogue_start_time: 12.53
+agent_dialogue: My hi [PERSON_NAME]. Good morning. How are you?
+
+customer_dialogue_start_time: 16.53
+customer_dialogue: I'm pretty good. How about yourself?
+
+agent_dialogue_start_time: 19.13
+agent_dialogue: Doing well. Thanks for asking. Can you confirm to me your phone number real quick?
+
+customer_dialogue_start_time: 23.73
+customer_dialogue: Sure. It's [CUSTOM_NUMBER_SEQUENCE]
+
+agent_dialogue_start_time: 30.23
+agent_dialogue: Wonderful. Thank you so much. And how may I be of help for you today?
+
+agent_dialogue_start_time: 50.13
+agent_dialogue: oh,
+
+agent_dialogue_start_time: 54.33
+agent_dialogue: right. Yeah yeah.
+
+customer_dialogue_start_time: 34.43
+customer_dialogue: Well my my phone is not working well and I I shattered the screen I'm talking to you on it but my son-in-law gave me a new phone that he did not like so I'm hoping I I now how nice right? I mean it'll work fine for me so wage rate I want to make sure well I don't know how to transfer the information from my phone to this new phone and I was hoping you could help me with that.
+
+customer_dialogue_start_time: 80.53
+customer_dialogue: Okay.
+
+agent_dialogue_start_time: 69.73
+agent_dialogue: Okay, sure, not a problem. What we are going to do? We will process the activation first so that we can activate the new phone that he gave you your number. So that is going to work. Okay, all right.
+
+customer_dialogue_start_time: 91.23
+customer_dialogue: Yeah.
+
+agent_dialogue_start_time: 84.23
+agent_dialogue: And then this is this is what we're going to. I would suggest for you to do this, okay? I understand that your your was it for your name.
+
+customer_dialogue_start_time: 96.93
+customer_dialogue: My son-in-law. Yeah.
+
+agent_dialogue_start_time: 98.51
+agent_dialogue: Your son-in-law. Yeah, I understand that. You said that your son-in-law has given you a phone that he is not using, but if you'd like, you can go ahead and add insurance in to your account. Okay? So if you are going to add insurance after 30 days, you can go ahead and file a claim because we have an open enrollment right now. So, when you file a claim after 30 days, you will be given
+
+agent_dialogue_start_time: 125.61
+agent_dialogue: 3:30 place. Your
+
+customer_dialogue_start_time: 122.67
+customer_dialogue: A claim explain it, you mean, file insurance. Now on my old phone,
+
+agent_dialogue_start_time: 131.12
+agent_dialogue: that is right. So we can add insurance first, but you are unable to file a claim not until 30 days because we have an open enrollment right now.
+
+customer_dialogue_start_time: 140.47
+customer_dialogue: Okay.
+
+agent_dialogue_start_time: 140.31
+agent_dialogue: Because in cases like crack on the screen, it's going to be unlimited repair. But say for example, it's really something that needs to be replaced and that's the time that they can process or replacement for you.
+
+agent_dialogue_start_time: 154.71
+agent_dialogue: if you're
+
+customer_dialogue_start_time: 154.17
+customer_dialogue: And how much is the insurance?
+
+agent_dialogue_start_time: 156.51
+agent_dialogue: sure it's $19 every month. So that's already covers lost or stolen water damage, malfunction issues, unlimited repair, and the crack screen. So that at least you don't have to buy a phone that has a full price of sitting around $700 a thousand.
+
+customer_dialogue_start_time: 177.97
+customer_dialogue: Right. However, I have a free phone in my other hand.
+
+customer_dialogue_start_time: 190.97
+customer_dialogue: Oh, okay.
+
+customer_dialogue_start_time: 194.73
+customer_dialogue: Okay. No, that's fine.
+
+agent_dialogue_start_time: 184.21
+agent_dialogue: Oh yeah, but still we can we can use that. I was just offering you your other option. Just in case you wanted to file a claim. Yeah, it was just something that you need to know as well as your option.
+
+customer_dialogue_start_time: 197.87
+customer_dialogue: I understand, thank you. Okay.
+
+agent_dialogue_start_time: 200.31
+agent_dialogue: No worries. Now on that phone, could you please? What's the make and model of that phone [PERSON_NAME]?
+
+customer_dialogue_start_time: 208.73
+customer_dialogue: The new one.
+
+agent_dialogue_start_time: 209.61
+agent_dialogue: Yeah.
+
+agent_dialogue_start_time: 220.48
+agent_dialogue: Sure.
+
+customer_dialogue_start_time: 211.33
+customer_dialogue: Okay, it is I know let's see. What is it? Say it is. It's a I'm going to read it to you. It's a it's a t m o r e v v, l 6 X pro 5G.
+
+agent_dialogue_start_time: 233.78
+agent_dialogue: Let's try to see if that is going to be.
+
+agent_dialogue_start_time: 241.87
+agent_dialogue: It's going to be compatible with your Verizon services. Let's try to see
+
+customer_dialogue_start_time: 249.23
+customer_dialogue: Yeah, this is through T-Mobile.
+
+customer_dialogue_start_time: 264.93
+customer_dialogue: Okay.
+
+agent_dialogue_start_time: 253.58
+agent_dialogue: Yeah, that's the thing because when you said the make and model, are you already can say that that's for the mobile. So it might not be compatible. But we can try. Can you provide me with that? Do you know how to get the IMEI number from that device?
+
+customer_dialogue_start_time: 272.43
+customer_dialogue: On the new one.
+
+agent_dialogue_start_time: 274.18
+agent_dialogue: Yes, and the new one.
+
+customer_dialogue_start_time: 276.73
+customer_dialogue: The IMEI. Yes, I have it right here.
+
+agent_dialogue_start_time: 279.98
+agent_dialogue: He very good. Can you share it with me?
+
+customer_dialogue_start_time: 284.36
+customer_dialogue: Sure. It's you ready? It's long. It's 816.
+
+agent_dialogue_start_time: 286.88
+agent_dialogue: Mhm. Yeah, you know it's a series of numbers.
+
+customer_dialogue_start_time: 291.36
+customer_dialogue: Yeah, it's 865. No, I'm sorry. I'm going to start over [CUSTOM_NUMBER_SEQUENCE].
+
+customer_dialogue_start_time: 301.13
+customer_dialogue: [CUSTOM_NUMBER_SEQUENCE].
+
+agent_dialogue_start_time: 310.87
+agent_dialogue: Okay. I'll go ahead and try because the acceptable or the compatible IMEI numbers, which is accepted by, Verizon usually starts with 350. We can try okay.
+
+customer_dialogue_start_time: 324.36
+customer_dialogue: Okay.
+
+agent_dialogue_start_time: 325.68
+agent_dialogue: All right, I'm doing it right now.
+
+customer_dialogue_start_time: 338.61
+customer_dialogue: That's what I have a feeling.
+
+agent_dialogue_start_time: 335.1
+agent_dialogue: Yeah, so it cannot be used, the device cannot be used and is not compatible with Verizon network.
+
+customer_dialogue_start_time: 345.11
+customer_dialogue: Okay, so I think what I'll probably do is take the insurance and I can't use it for 30 days. Is that it?
+
+customer_dialogue_start_time: 356.71
+customer_dialogue: Okay.
+
+agent_dialogue_start_time: 354.4
+agent_dialogue: That's right, so you have to wait after 30 days first because that is there that is there agreement? It's just so happened that they now they do have an open enrollment so you can understand how that sided and then after 30 days you can go ahead and start filing a claim. But I'm very worried of you [PERSON_NAME] as of the moment within 30 days you have no phone to use. You can fucking for me. So are you able to give the make a phone call?
+
+agent_dialogue_start_time: 389.3
+agent_dialogue: Big crack.
+
+customer_dialogue_start_time: 381.71
+customer_dialogue: I am. I am. It's just the the front of the screen has got like a big like a spiderweb. Yeah. It's a big spider web page.
+
+agent_dialogue_start_time: 392.21
+agent_dialogue: Oh yeah yeah. It's like a scattered thing.
+
+customer_dialogue_start_time: 396.21
+customer_dialogue: Yes, yes.
+
+agent_dialogue_start_time: 397.7
+agent_dialogue: Yeah. Okay. All right go ahead and have it added here. So you have to be patient within 30 days.
+
+customer_dialogue_start_time: 407.91
+customer_dialogue: Right? So it would be October.
+
+customer_dialogue_start_time: 414.21
+customer_dialogue: Would it be the October 12th or the 13th?
+
+agent_dialogue_start_time: 414.4
+agent_dialogue: October 13th. Yeah, thirteen.
+
+customer_dialogue_start_time: 419.31
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 421.51
+customer_dialogue: Okay.
+
+agent_dialogue_start_time: 423.21
+agent_dialogue: All right, xxx moment.
+
+agent_dialogue_start_time: 439.4
+agent_dialogue: Do you have access to your email and another on a separate device?
+
+customer_dialogue_start_time: 444.51
+customer_dialogue: I sure do.
+
+agent_dialogue_start_time: 446.31
+agent_dialogue: Very good xxx moment because I'm going to send you a document. I'll just present it to you. Okay? One moment.
+
+agent_dialogue_start_time: 454.11
+agent_dialogue: I want you to see it and not just hear it especially for the charging.
+
+agent_dialogue_start_time: 492.11
+agent_dialogue: Please bear with me. Okay, I'm on it.
+
+agent_dialogue_start_time: 601.94
+agent_dialogue: Unless they're okay, just preparing everything for you.
+
+customer_dialogue_start_time: 606.62
+customer_dialogue: Sure, thank you.
+
+agent_dialogue_start_time: 647.99
+agent_dialogue: Most are [PERSON_NAME]. I just wanted to make sure that these are all taken care of, for you. I do not want you to have problems in the future,
+
+customer_dialogue_start_time: 656.24
+customer_dialogue: Hum.
+
+agent_dialogue_start_time: 804.36
+agent_dialogue: [PERSON_NAME]. Can you confirm your email address for me?
+
+customer_dialogue_start_time: 808.22
+customer_dialogue: Yes it's k a t e. H [CUSTOM_NUMBER_SEQUENCE].
+
+agent_dialogue_start_time: 817.96
+agent_dialogue: Wonderful, thank you so much. One moment.
+
+agent_dialogue_start_time: 872.6
+agent_dialogue: I'll go ahead and send you a document to your email now [PERSON_NAME]. Okay. And then click on it. I just wanted to show you the addition of the insurance, okay?
+
+customer_dialogue_start_time: 883.37
+customer_dialogue: Okay.
+
+agent_dialogue_start_time: 884.7
+agent_dialogue: There you go.
+
+customer_dialogue_start_time: 892.77
+customer_dialogue: Here's the quote.
+
+customer_dialogue_start_time: 896.72
+customer_dialogue: Do you have access to my file there for my phone?
+
+customer_dialogue_start_time: 911.47
+customer_dialogue: No, no no, no no. I mean no. I don't want you to yes. My plan. Can you can you tell me when it completed when it's done?
+
+customer_dialogue_start_time: 926.37
+customer_dialogue: Yes.
+
+customer_dialogue_start_time: 940.87
+customer_dialogue: Review and confirm.
+
+customer_dialogue_start_time: 958.77
+customer_dialogue: That's so stupid. Not not not no offense to you. I'm just it just makes me some. I mean, it just makes me sick so okay, all right.
+
+customer_dialogue_start_time: 987.57
+customer_dialogue: Thank you.
+
+customer_dialogue_start_time: 1001.72
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 1014.67
+customer_dialogue: Yep.
+
+customer_dialogue_start_time: 1032.47
+customer_dialogue: And then my password.
+
+customer_dialogue_start_time: 1039.57
+customer_dialogue: I don't think that's my password. All right, well, let me do that.
+
+customer_dialogue_start_time: 1049.27
+customer_dialogue: Oh, okay.
+
+customer_dialogue_start_time: 1071.17
+customer_dialogue: Sure. I mean I have nothing to hide. Believe me.
+
+customer_dialogue_start_time: 1090.17
+customer_dialogue: Right.
+
+customer_dialogue_start_time: 1094.87
+customer_dialogue: He is like my biggest fan.
+
+customer_dialogue_start_time: 1100.27
+customer_dialogue: Yeah. Yeah.
+
+customer_dialogue_start_time: 1120.67
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 1122.67
+customer_dialogue: so, can I can't
+
+customer_dialogue_start_time: 1125.97
+customer_dialogue: okay, so can I cancel the insurance once it's done or
+
+customer_dialogue_start_time: 1134.17
+customer_dialogue: and then does it get transferred? Does it automatically transfer to a new phone or
+
+customer_dialogue_start_time: 1142.17
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 1146.57
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 1152.97
+customer_dialogue: So, it does.
+
+customer_dialogue_start_time: 1162.59
+customer_dialogue: Okay. Okay, all right. Great.
+
+customer_dialogue_start_time: 1168.19
+customer_dialogue: Well, once it's paid off, I guess.
+
+customer_dialogue_start_time: 1173.91
+customer_dialogue: I guess I could.
+
+customer_dialogue_start_time: 1177.29
+customer_dialogue: Yeah, yeah, I'll just pay it off and, you know, I mean, maybe, maybe I'll just get it fixed and then keep it until it dies.
+
+customer_dialogue_start_time: 1189.19
+customer_dialogue: Right.
+
+customer_dialogue_start_time: 1196.89
+customer_dialogue: That's what I'm thinking. I don't know. I don't have to make that decision today. Do I
+
+customer_dialogue_start_time: 1203.99
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 1210.69
+customer_dialogue: Okay, without doing it without doing the claim. I mean,
+
+customer_dialogue_start_time: 1218.49
+customer_dialogue: yeah.
+
+customer_dialogue_start_time: 1233.99
+customer_dialogue: Oh, I see. And okay, and so if I did that, then I just call you back and you can help me program the new phone and transfer all the information over to it.
+
+customer_dialogue_start_time: 1258.59
+customer_dialogue: Right.
+
+customer_dialogue_start_time: 1260.89
+customer_dialogue: Correct.
+
+customer_dialogue_start_time: 1273.17
+customer_dialogue: Okay, all right.
+
+customer_dialogue_start_time: 1279.71
+customer_dialogue: All right.
+
+customer_dialogue_start_time: 1282.71
+customer_dialogue: Well, I might as well pay it off and get a I don't know. [PERSON_NAME] and how much is the new phone going to cost me?
+
+customer_dialogue_start_time: 1295.17
+customer_dialogue: Yeah.
+
+customer_dialogue_start_time: 1298.97
+customer_dialogue: Oh, I have no idea. I have not I have
+
+customer_dialogue_start_time: 1317.71
+customer_dialogue: 175.
+
+customer_dialogue_start_time: 1349.57
+customer_dialogue: Right.
+
+customer_dialogue_start_time: 1357.17
+customer_dialogue: Well, I only use it for texting and talking quite honestly.
+
+customer_dialogue_start_time: 1362.37
+customer_dialogue: And and I take pictures with it and I take pictures with it.
+
+customer_dialogue_start_time: 1368.77
+customer_dialogue: Yeah.
+
+customer_dialogue_start_time: 1384.58
+customer_dialogue: How much is an iPhone?
+
+customer_dialogue_start_time: 1387.48
+customer_dialogue: I have an Apple iPad.
+
+customer_dialogue_start_time: 1392.48
+customer_dialogue: Yeah.
+
+customer_dialogue_start_time: 1407.48
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 1413.58
+customer_dialogue: once I get the new one,
+
+customer_dialogue_start_time: 1418.38
+customer_dialogue: okay, I can do that.
+
+customer_dialogue_start_time: 1432.8
+customer_dialogue: Yep.
+
+customer_dialogue_start_time: 1463.8
+customer_dialogue: OK, Google
+
+customer_dialogue_start_time: 1467.38
+customer_dialogue: okay, let me
+
+customer_dialogue_start_time: 1470.38
+customer_dialogue: OK, Google
+
+customer_dialogue_start_time: 1487.71
+customer_dialogue: IPhone 14. Is it a pro Max Pro? A plus? Does it matter? Okay.
+
+customer_dialogue_start_time: 1500.31
+customer_dialogue: All right.
+
+customer_dialogue_start_time: 1503.1
+customer_dialogue: 14 Deals shop now and get it on us, special deals and promotions. Do they apply?
+
+customer_dialogue_start_time: 1521.71
+customer_dialogue: Okay, okay.
+
+customer_dialogue_start_time: 1539.61
+customer_dialogue: Let's do it with red. Why not?
+
+customer_dialogue_start_time: 1544.81
+customer_dialogue: I mean Apple for red, right? Yeah, I can't lose it. Maybe I won't lose it, who knows?
+
+customer_dialogue_start_time: 1565.71
+customer_dialogue: Well, it's 11. Yeah, with the insurance. Yeah.
+
+customer_dialogue_start_time: 1598.88
+customer_dialogue: How much good thing I'm sitting down?
+
+customer_dialogue_start_time: 1604.18
+customer_dialogue: Yes.
+
+customer_dialogue_start_time: 1647.28
+customer_dialogue: Right.
+
+customer_dialogue_start_time: 1649.48
+customer_dialogue: No, I think I need the insurance.
+
+customer_dialogue_start_time: 1675.28
+customer_dialogue: Right? Cuz I have to pay this off.
+
+customer_dialogue_start_time: 1695.32
+customer_dialogue: I'm thirty-five on top.
+
+customer_dialogue_start_time: 1701.12
+customer_dialogue: Oh God.
+
+customer_dialogue_start_time: 1712.42
+customer_dialogue: Well.
+
+customer_dialogue_start_time: 1722.2
+customer_dialogue: So to [CUSTOM_NUMBER_SEQUENCE], I think is what you told me.
+
+customer_dialogue_start_time: 1743.72
+customer_dialogue: Right.
+
+customer_dialogue_start_time: 1745.52
+customer_dialogue: Right.
+
+customer_dialogue_start_time: 1749.82
+customer_dialogue: so,
+
+customer_dialogue_start_time: 1752.62
+customer_dialogue: Does this have?
+
+customer_dialogue_start_time: 1755.42
+customer_dialogue: The 256 GB, or there's all. And there's also 128.
+
+customer_dialogue_start_time: 1769.42
+customer_dialogue: that xxx says,
+
+customer_dialogue_start_time: 1772.12
+customer_dialogue: okay.
+
+customer_dialogue_start_time: 1774.12
+customer_dialogue: Okay.
+
+customer_dialogue_start_time: 1776.42
+customer_dialogue: I think that's funny.
+
+customer_dialogue_start_time: 1784.42
+customer_dialogue: Right? I can always do that down the road.
+
+customer_dialogue_start_time: 1790.42
+customer_dialogue: If I want to.
