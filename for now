@@ -1,0 +1,167 @@
+CREATE MULTISET VOLATILE TABLE NET_REV_DATA_DETAIL_ADD, NO Log AS 
+
+	(SELECT
+     NPC.EMPLOYEE_ID 
+	, npc.employee_id AS ORIG_EMPL_ID
+    ,  NPC.ACTIVITY_DT 
+	,  NPC.TRANS_TS
+	,  NPC.ACTIVITY_CD
+    ,  NPC.CUST_ID 
+    ,  NPC.ACCT_NUM 
+	,  NPC.CUST_LINE_SEQ_ID
+	,  NPC.MTN
+    ,  NPC.SRC_TYPE_CD
+    ,  NPC.SRC_GRP_CD
+	,  NPC.SRC_ID -- NEED TO ADD
+    ,  NPC.SRC_DESC
+    ,  NPC.PLAN_VAL 
+    ,  NPC.FEAT_VAL 
+    ,  NPC.TOTAL_VAL 
+	, NPC.ACTIVITY_DT AS DATE_ADDED
+	, 0 AS NUM_DAYS_SINCE_ADD
+        
+        
+        ,CASE
+            WHEN NPC.ACTIVITY_CD = 'AC' THEN 'ADDS'
+            WHEN NPC.ACTIVITY_CD = 'DE' THEN 'REMOVALS'
+        END AS CHANGE_FLAG,
+        CASE
+            WHEN NPC.PLAN_VAL > 0 THEN 'STEP_UP'
+            WHEN NPC.PLAN_VAL < 0 THEN 'STEP_DOWN'
+            ELSE 'NO_CHANGE'
+        END AS PLAN_STEP_FLAG,
+        CASE
+            WHEN NPC.FEAT_VAL > 0 THEN 'FEATURE_ADD'
+            WHEN NPC.FEAT_VAL < 0 THEN 'FEATURE_REMOVAL'
+            ELSE 'NO_CHANGE'
+        END AS FEATURE_FLAG,
+        CASE
+            WHEN NPC.TOTAL_VAL > 0 THEN 'STEP_UP'
+            WHEN NPC.TOTAL_VAL < 0 THEN 'STEP_DOWN'
+            ELSE 'NO_CHANGE'
+        END AS TOTAL_NET_REVENUE,
+		 CASE 
+            WHEN LINE_PLAN_CHG.PLAN_CHG_IND IS NOT NULL THEN LINE_PLAN_CHG.PLAN_CHG_IND
+            ELSE 'N' 
+        END AS PLAN_CHG_IND_FLAG,
+        
+        
+        HR.Channel,
+        HR.Bus_Sgmnt_ID,
+        HR.Bus_Sgmnt_Desc,
+        HR.User_ID,
+        HR.Emp_ID,
+        HR.Emp_Nm,
+        HR.Job_CD,
+        HR.Job_Desc,
+        HR.Alt_Job_Desc,
+        HR.Job_Group,
+        HR.Area_CD,
+        HR.Area_Desc,
+        HR.Dept_ID,
+        HR.Dept_Desc,
+        HR.Loc_CD,
+        HR.Loc_Desc,
+        HR.State,
+        HR.Call_Center_ID AS Virtual_ID,
+        HR.Call_Center_Alias AS Virtual_Desc,
+        HR.Branch_ID AS Virtual_Type_ID,
+        HR.Branch_Desc AS Virtual_Type_Desc,
+        HR.Call_Center_Mkt AS Virtual_Comp_ID,
+        HR.Supv_Lvl1_Emp_ID,
+        HR.Supv_Lvl1_Emp_Nm,
+        HR.Supv_Lvl2_Emp_ID,
+        HR.Supv_Lvl2_Emp_Nm,
+        HR.Supv_Lvl3_Emp_ID,
+        HR.Supv_Lvl3_Emp_Nm,
+        HR.Supv_Lvl4_Emp_ID,
+        HR.Supv_Lvl4_Emp_Nm,
+        HR.Eff_Dt,
+        HR.Exp_Dt,
+        HR.CENTER_TYPE  -- adding to allow for Internal/External Filter 10.9.23 Kelly J
+    FROM (
+        SELECT
+            ACTIVITY_DT,
+            TRANS_TS,
+            ACTIVITY_CD,
+            employee_ID,
+            cust_id,
+            acct_num,
+            CUST_LINE_SEQ_ID,
+			AAL_IND,
+            MTN,
+            src_type_cd,
+            src_grp_cd,
+            src_ID,
+            src_desc,
+            src_amt AS total_val,
+            CASE WHEN SRC_TYPE_CD IN ('PPL','VLC','VPC','LAC') THEN SRC_AMT ELSE 0 END AS PLAN_VAL,
+            CASE WHEN SRC_TYPE_CD IN ('PRO','SFO','SPO') THEN SRC_AMT ELSE 0 END AS FEAT_VAL
+        FROM NTL_PRD_QMTBLS.HQCS_NV_DETAIL
+        WHERE ACTIVITY_DT BETWEEN (SELECT BEGIN_DT FROM v_VAR_DTS) AND (SELECT END_DT FROM v_VAR_DTS)
+            AND ACTIVITY_DT < 1241001
+            AND PREPAID_IND <> 'Y'  --REMOVING PREPAID FROM VAR data KCJ 10/28/24
+            AND SRC_TYPE_CD IN ('PPL','VLC','VPC','LAC') --Removed PRO SFO SPO
+            AND ACTIVITY_CD = 'AC'
+			 --AND TRANSFER_IND = 'N'  -- Removed after receiving correct logic from Randy Davis 11/17/23 kcj
+            AND ((
+				NEW_LINE_IND = 'N' 
+				AND NEW_ACCT_IND = 'N' 
+				AND LOST_ACCT_IND = 'N' 
+                AND LOST_LINE_IND = 'N' 
+				AND NEW_LINE_ORD_IND = 'N' 
+				AND LOST_LINE_ORD_IND = 'N'
+				)
+                OR AAL_IND = 'Y' 
+				OR DISC_IND = 'Y' 
+				OR AOL_IND = 'Y'
+            	)
+        UNION
+        SELECT
+            ACTIVITY_DT,
+            TRANS_TS,
+            ACTIVITY_CD,
+            employee_ID,
+            cust_id,
+            acct_num,
+            CUST_LINE_SEQ_ID,
+			AAL_IND,
+            MTN,
+            src_type_cd,
+            src_grp_cd,
+            src_ID,
+            src_desc,
+            src_amt AS total_val,
+            CASE WHEN SRC_TYPE_CD IN ('PPL','VLC','VPC','LAC') THEN SRC_AMT ELSE 0 END AS PLAN_VAL,
+            CASE WHEN SRC_TYPE_CD IN ('PRO','SFO','SPO') THEN SRC_AMT ELSE 0 END AS FEAT_VAL
+        FROM NTL_PRD_QMTBLS.HQCS_NV_DETAIL
+        WHERE ACTIVITY_DT BETWEEN (SELECT BEGIN_DT FROM v_VAR_DTS) AND (SELECT END_DT FROM v_VAR_DTS)
+            AND ACTIVITY_DT >= 1241001
+            AND PREPAID_IND <> 'Y' --REMOVING PREPAID FROM VAR data KCJ 10/28/24
+            AND SRC_TYPE_CD IN ('PPL','VLC','VPC','LAC')
+            AND ACTIVITY_CD = 'AC'
+			 --AND TRANSFER_IND = 'N'  -- Removed after receiving correct logic from Randy Davis 11/17/23 kcj
+            AND ((
+                NEW_LINE_IND = 'N' 
+				AND NEW_ACCT_IND = 'N' 
+				AND LOST_ACCT_IND = 'N' 
+                AND LOST_LINE_IND = 'N' 
+				AND NEW_LINE_ORD_IND = 'N' 
+				AND LOST_LINE_ORD_IND = 'N'
+				)
+                OR AAL_IND = 'Y' 
+				OR DISC_IND = 'Y' 
+				OR AOL_IND = 'Y'
+            	)
+    ) NPC
+    LEFT JOIN LINE_PLAN_CHG
+        --ON NPC.ACTIVITY_DT = LINE_PLAN_CHG.ACTIVITY_DT
+        ON NPC.CUST_ID = LINE_PLAN_CHG.CUST_ID
+        AND NPC.CUST_LINE_SEQ_ID = LINE_PLAN_CHG.CUST_LINE_SEQ_ID
+    INNER JOIN NTL_PRD_QMTBLS.RMC_CARE_REP_MAPPING_HIST HR
+        ON NPC.Employee_ID = HR.emp_id
+        AND NPC.ACTIVITY_DT BETWEEN HR.EFF_DT AND HR.EXP_DT
+)
+WITH DATA
+PRIMARY INDEX (EMPLOYEE_ID, ACTIVITY_DT, ACTIVITY_CD, CUST_ID, ACCT_NUM, CUST_LINE_SEQ_ID, MTN, SRC_TYPE_CD, SRC_GRP_CD)
+ON COMMIT PRESERVE ROWS;
