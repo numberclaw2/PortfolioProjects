@@ -1,0 +1,47 @@
+You are being instructed to complete several tasks and manage specific responsibilities related to the hierarchy mapping, dashboard development, and project clarifications. Here’s a clear breakdown of your instructions:
+
+Primary Tasks You’re Responsible For
+
+1. Work on Hierarchy Mapping
+	•	You are expected to:
+	•	Use the reference table that your manager will provide.
+	•	Collaborate with Matt, Wen, and the team to define how hierarchies (job titles and levels) should be organized for the Care Project.
+	•	Schedule a meeting with the team to finalize these hierarchy rollups.
+	•	Key Goals:
+	•	Ensure clear definitions of hierarchy levels (e.g., supervisor → senior manager → VP).
+	•	Confirm whether levels will be represented as Level 1, 2, 3, or some other structure.
+	•	Resolve discrepancies where titles don’t align (e.g., missing Director roles).
+
+2. Prepare for Dashboard Development
+	•	Before starting the dashboard:
+	•	Wait for hierarchy definitions to be finalized during the meeting.
+	•	Understand that dashboard rollups depend on these definitions and changes later could lead to rework.
+	•	Once hierarchy mapping is resolved:
+	•	Start building the Care Project dashboard using the rollup data.
+
+3. Permissions for the Chat Data Dashboard
+	•	For the Chat Data (Inside Sales) dashboard:
+	•	Ensure row-level security permissions and user group permissions are correctly added to the dashboard before moving it to production.
+	•	Confirm permissions match existing dashboards (copy as needed).
+	•	Coordinate with TJ for the final move to production after receiving sign-off from the team.
+
+4. Clarify Distinctions Between Projects
+	•	Clear up any confusion between:
+	•	Chat data (inside sales project): Already in the sandbox, waiting for sign-off.
+	•	Care Project: Pending hierarchy mapping, not yet in production.
+	•	Call data project: A separate project (likely related to reviewing calls).
+	•	Ensure clear communication with stakeholders (e.g., Robbie) to avoid further mix-ups.
+
+Secondary Expectations
+	•	Use your functional ID for accessing and working with data, as discussed.
+	•	Follow up with Robbie to ensure he is informed about progress and expectations for each project.
+	•	Manage priorities effectively given your workload and holiday schedule.
+
+Summary of Immediate Actions
+	1.	Receive the reference table and share it with Matt, Wen, and the team.
+	2.	Set up a meeting to finalize hierarchy definitions for the Care Project.
+	3.	Ensure permissions for the Chat Data Dashboard are complete when moving to production.
+	4.	Separate and clarify your involvement in the Chat, Care, and Call data projects.
+	5.	Update Robbie and other stakeholders as needed.
+
+Let me know if you need help with organizing these tasks or drafting follow-ups!
