@@ -32,3 +32,5 @@ AND DATE BETWEEN MET.EFF_DT AND MET.EXP_DT
 
 
 );
+CREATE VIEW Failed.  [3807] Object 'FACT' does not exist.
+
