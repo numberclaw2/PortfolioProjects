@@ -1,0 +1,142 @@
+Here’s a detailed analysis and actionable plan based on the transcript and meeting notes. I’ve organized this into Key Action Items, Issues and Challenges, and Recommendations, providing more context for each.
+
+Key Action Items and Implementation Plan
+
+1. Utilization Dashboard Access
+	•	Action: Ensure the BI team has access to the Utilization Dashboard.
+	•	Steps:
+	•	Verify current access permissions for the BI team.
+	•	Work with IT or database admins to grant necessary access.
+	•	Test access to confirm functionality.
+
+2. Fix Active Report Date Selection
+	•	Action: Investigate why the “ReportDate” filter does not allow selecting the two most recent dates on the Scorecard and Rep tabs.
+	•	Steps:
+	•	Verify if the issue is intentional (by design) or an oversight.
+	•	Check date logic in the dashboard backend (e.g., SQL queries, Tableau/BI tool configurations).
+	•	Modify the filter to ensure the two most recent dates are selectable if it was unintentional.
+
+3. Enhance Data Tables for Outlier Detection
+	•	Action: Update data tables to enable outlier detection, similar to TESR summary reports.
+	•	Steps:
+	•	Review current data structure and limitations.
+	•	Design enhancements to capture key metrics (e.g., exception volume or performance outliers).
+	•	Implement logic to flag data points exceeding defined thresholds.
+	•	Test and validate outlier reports before deployment.
+
+4. Standardize Naming and Filters
+	•	Action: Update filters and naming conventions for consistency.
+	•	Steps:
+	•	Capitalize “Ad” in “AdLocNm” on all tabs.
+	•	Decide on abbreviation or full names for all filter titles across Scorecard, Monthly Trends, and Rep tabs.
+	•	Ensure filters are in the same order across tabs (e.g., “Director, AD, Supervisor”).
+	•	Test changes to confirm functionality and ease of use.
+
+5. Fix Dashboard Links
+	•	Action: Repair the link to the Inside Sales Complio Toolkit on Scorecard, Monthly Trends, and Rep tabs.
+	•	Steps:
+	•	Identify and fix broken or outdated URLs.
+	•	Validate functionality for all three tabs.
+
+6. Align Targets and Definitions
+	•	Action: Align “DateTimeframe” data in Rep View with hover-over details.
+	•	Steps:
+	•	Identify discrepancies in date ranges (e.g., “924 to 1024” vs. “81 to 1024”).
+	•	Review the calculation or parameter generating date ranges.
+	•	Correct tooltip logic to display accurate time frames.
+
+7. Sort Logic Updates
+	•	Action: Adjust sorting to toggle accurately between volume and percentage.
+	•	Steps:
+	•	Confirm default sort logic is consistent across dashboards.
+	•	Modify sorting logic based on user feedback or requirements (e.g., default to volume if it’s more critical).
+
+8. Remove Excess Space
+	•	Action: Reduce unnecessary white space at the bottom of tabs.
+	•	Steps:
+	•	Adjust container height for all dashboard views to ensure consistency.
+	•	Confirm that no critical data is truncated in the updated layout.
+
+9. Address Duplicate Rep Names
+	•	Action: Fix duplicates in the “RepName” column caused by USWIN/username discrepancies.
+	•	Steps:
+	•	Review cases like Kristina Henley and Nariah Baymon.
+	•	Identify root causes (e.g., multiple employee IDs for one user).
+	•	Consolidate duplicates by using unique identifiers like User ID.
+
+10. Language Update
+	•	Action: Update the language for “RMC recommends utilizing exception volume…” on the Rep tab.
+	•	Steps:
+	•	Collaborate with stakeholders to draft replacement language.
+	•	Ensure the new text provides clear, actionable guidance.
+
+Issues and Challenges
+
+1. Director Data Cleanup
+	•	Challenge: Directors who are no longer part of Inside Sales appear in filters.
+	•	Plan:
+	•	Review the current data source for director names.
+	•	Cross-check against an updated list of active directors.
+	•	Remove or archive inactive directors from both Scorecard and Rep tabs.
+
+2. Average Calculation Discrepancies
+	•	Challenge: Averages do not update based on filters on some tabs.
+	•	Plan:
+	•	Validate average calculation logic in Scorecard and Rep views.
+	•	Align logic to ensure calculations reflect selected filters accurately.
+
+3. User Engagement
+	•	Challenge: Low dashboard usage post-launch.
+	•	Plan:
+	•	Provide training sessions tailored to actionable insights.
+	•	Roll out a pilot alert system to engage users (e.g., nudges for key metrics).
+	•	Monitor usage trends and iterate based on feedback.
+
+4. Data Synchronization
+	•	Challenge: Delays and discrepancies in report dates between sandbox and production.
+	•	Plan:
+	•	Investigate refresh schedules and timing differences.
+	•	Align sandbox and production environments to reduce inconsistencies.
+	•	Document the synchronization process to prevent future misalignment.
+
+5. Filter Functionality
+	•	Challenge: Filters behave inconsistently across tabs.
+	•	Plan:
+	•	Standardize filter logic across all views.
+	•	Test filters to ensure accurate data is displayed regardless of tab.
+
+Recommendations
+
+1. Pilot Automated Alerts
+	•	Use thresholds (e.g., top 10% of underperformers) for nudges.
+	•	Engage stakeholders to refine alert criteria.
+
+2. Streamline Training and Onboarding
+	•	Provide hands-on sessions with examples of actionable insights.
+	•	Develop a knowledge base or documentation for common dashboard tasks.
+
+3. Conduct a Data Audit
+	•	Validate dashboard data against source tables to ensure accuracy.
+	•	Address discrepancies in calculated metrics or date ranges.
+
+4. Simplify Dashboard Design
+	•	Reduce excess white space.
+	•	Ensure uniformity in filter names, logic, and layout.
+
+5. Incremental Improvements
+	•	Roll out changes in stages to allow for testing and feedback.
+	•	Use the sandbox environment for validation before production updates.
+
+Timeline and Next Steps
+
+Task	Owner	Deadline	Notes
+Access to Utilization Dashboard	BI Team	2 Days	Test access after setup.
+Fix Report Date Filters	BI Team	3 Days	Verify updated logic.
+Outlier Detection Tables	BI Team	5 Days	Align with TESR reports.
+Standardize Filters and Naming	BI Team	5 Days	Apply across all tabs.
+Fix Links to Toolkit	BI Team	3 Days	Test on all tabs.
+Validate Date Ranges	BI Team	4 Days	Fix tooltip inaccuracies.
+Remove Excess White Space	BI Team	4 Days	Ensure uniformity.
+Duplicate Rep Names	BI Team	5 Days	Resolve cases like Henley/Baymon.
+
+This detailed breakdown ensures that tasks are actionable, prioritized, and measurable. Let me know if you’d like adjustments or further elaboration!
