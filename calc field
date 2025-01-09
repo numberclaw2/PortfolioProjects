@@ -1,0 +1,1 @@
+ATTR([Metric Num Nm]) + char(10) + '-----------------------------------' + char(10) + ATTR([Metric Den Nm])
