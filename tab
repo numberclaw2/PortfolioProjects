@@ -4,3 +4,9 @@ Price Change vs Last Quarter
 
 (AVG([Price]) - WINDOW_AVG(AVG([Price]))) / WINDOW_AVG(AVG([Price]))
 
+IF [pool] = TRUE AND [hot_tub] = TRUE THEN "Pool & Hot Tub"
+ELSEIF [pool] = TRUE THEN "Pool Only"
+ELSEIF [hot_tub] = TRUE THEN "Hot Tub Only"
+ELSE "No Pool or Hot Tub"
+END
+
