@@ -1,1 +1,3 @@
 (AVG([Price]) - LOOKUP(AVG([Price]), -1)) / LOOKUP(AVG([Price]), -1)
+
+Price Change vs Last Quarter
