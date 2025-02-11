@@ -1,3 +1,6 @@
 (AVG([Price]) - LOOKUP(AVG([Price]), -1)) / LOOKUP(AVG([Price]), -1)
 
 Price Change vs Last Quarter
+
+(AVG([Price]) - WINDOW_AVG(AVG([Price]))) / WINDOW_AVG(AVG([Price]))
+
