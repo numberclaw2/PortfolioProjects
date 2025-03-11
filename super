@@ -62,6 +62,18 @@ Here are some questions you might explore in your analysis:
 	•	Which customer segments contribute the most to sales?
 	•	What is the average order processing time (Ship Date - Order Date)?
 Brief 1/Sample - Superstore.csv
+import os
 
+# List all files in the current directory
+os.listdir("Brief 1")
+
+
+import pandas as pd
+
+# Load dataset
+df = pd.read_csv("Brief 1/Sample - Superstore.csv", encoding="latin1")
+
+# Display first 5 rows
+df.head()
 
 Would you like me to generate graphs to visualize some of these trends?
