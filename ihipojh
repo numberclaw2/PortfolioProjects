@@ -1,0 +1,12 @@
+NTL_PRD_QMTBLS.RMC_CARE_MARKET_SCORECARD_MAPPING
+
+
+
+METRIC_NBR	METRIC_NM	METRIC_NUM_NM	METRIC_DEN_NM	EFF_DT	EXP_DT	METRIC_NM_FRIENDLY
+2	Duplicate 
+Device	Dup Dev	Smartphone Gross Adds	1/1/2022	12/31/2025	Duplicate Device
+1	Smartphone Non-Engagement	Non-Eng Cnt	Smartphone Net Adds	1/1/2022	12/31/2025	Smartphone Non-Engagement
+3	High Risk FWA Qualification	FWA Qual Cnt	Total FWA Sold	1/1/2022	12/31/2025	High Risk FWA Qualification
+5	VZ Protection 60 Day Deact	VMP & VZHDP Deact Cnt	VMP & VZHDP Sold	1/1/2022	12/31/2025	VZ Protection 60 Day Deact
+4	Perk Non-Registration	Non-Reg Perks Cnt	Total Perks Sold	1/1/2022	12/31/2025	Perk Non-Registration
+6	View Together Non-Use	No VT Completed Cnt	All Eligible Transactions	1/1/2022	12/31/2025	View Together Non-Use
